@@ -1,0 +1,91 @@
+name: 'CrowdStrike Falconutil GitHub Action'
+description: 'Run Falconutil patch-image tool'
+branding:
+  icon: 'shield'
+  color: 'red'
+inputs:
+  # Authentication inputs
+  falcon_client_id:
+    description: 'CrowdStrike API Client ID for authentication'
+    required: true
+  falcon_client_secret:
+    description: 'CrowdStrike API Client Secret for authentication'
+    required: true
+  falcon_region:
+    description: 'CrowdStrike API region. Allowed values are us-1, us-2, eu-1, us-gov-1, us-gov-2'
+    required: true
+    default: us-1
+
+  # Falconutil patch-image inputs
+  version:
+    description: 'Falcon Container Sensor version to use (defaults to the latest)'
+    required: false
+  cid:
+    description: 'CustomerId to use'
+    required: true
+  cloud_service:
+    description: 'Cloud Service platform. Allowed values: ACA | ACI | ECS_FARGATE | CLOUDRUN'
+    required: false
+  container:
+    description: 'Container name'
+    required: false
+  container_group:
+    description: 'Azure container group name for Azure Container Instances platform'
+    required: false
+  falcon_image_uri:
+    description: 'Falcon Container Sensor Image URI'
+    required: true
+  falconctl_opts:
+    description: 'All falconctl options in a single string'
+    required: false
+  image_pull_policy:
+    description: 'PullPolicy for Source and Falcon Container Sensor Image. Allowed values: IfNotPresent | Always'
+    required: false
+    default: 'Always'
+  resource_group:
+    description: 'Azure resource group name for Azure Container Instances and Azure Container Apps platform'
+    required: false
+  source_image_uri:
+    description: 'Source Image URI to be patched'
+    required: true
+  subscription:
+    description: 'Azure subscription id for Azure Container Instances and Azure Container Apps platform'
+    required: false
+  target_image_uri:
+    description: 'Expected URI for patched Target Image'
+    required: true
+
+outputs:
+  exit-code:
+    description: 'Exit code of the Falconutil tool'
+    value: ${{ steps.falconutil-run.outputs.exit-code }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Pull Falcon Container Sensor image
+      id: falconutil-pull
+      run: $GITHUB_ACTION_PATH/falconutil-pull.sh
+      shell: bash
+      env:
+        INPUT_FALCON_CLIENT_ID: ${{ inputs.falcon_client_id }}
+        INPUT_FALCON_REGION: ${{ inputs.falcon_region }}
+        INPUT_VERSION: ${{ inputs.version }}
+
+    - name: Run Falconutil patch-image
+      id: falconutil-run
+      run: $GITHUB_ACTION_PATH/falconutil-run.sh
+      shell: bash
+      env:
+        OUTPUT_FALCONUTIL_BIN: ${{ steps.falconutil-pull.outputs.FALCONUTIL_BIN }}
+        INPUT_CID: ${{ inputs.cid }}
+        INPUT_CLOUD_SERVICE: ${{ inputs.cloud_service }}
+        INPUT_CONTAINER: ${{ inputs.container }}
+        INPUT_CONTAINER_GROUP: ${{ inputs.container_group }}
+        INPUT_FALCON_IMAGE_URI: ${{ inputs.falcon_image_uri }}
+        INPUT_FALCONCTL_OPTS: ${{ inputs.falconctl_opts }}
+        INPUT_IMAGE_PULL_POLICY: ${{ inputs.image_pull_policy }}
+        INPUT_RESOURCE_GROUP: ${{ inputs.resource_group }}
+        INPUT_SOURCE_IMAGE_URI: ${{ inputs.source_image_uri }}
+        INPUT_SUBSCRIPTION: ${{ inputs.subscription }}
+        INPUT_TARGET_IMAGE_URI: ${{ inputs.target_image_uri }}
