@@ -27,8 +27,8 @@ inputs:
     description: 'Expected URI for patched Target Image'
     required: true
   falcon_image_uri:
-    description: 'Falcon Container Sensor Image URI'
-    required: true
+    description: 'Falcon Container Sensor Image URI (optional - defaults to using the image pulled by the action)'
+    required: false
   cloud_service:
     description: 'Cloud Service platform. Allowed values: ACA | ACI | ECS_FARGATE | CLOUDRUN'
     required: false
@@ -52,11 +52,6 @@ inputs:
     description: 'Azure subscription id for Azure Container Instances and Azure Container Apps platform'
     required: false
 
-outputs:
-  exit-code:
-    description: 'Exit code of the Falconutil tool'
-    value: ${{ steps.falconutil-run.outputs.exit-code }}
-
 runs:
   using: "composite"
   steps:
@@ -79,7 +74,7 @@ runs:
         INPUT_CLOUD_SERVICE: ${{ inputs.cloud_service }}
         INPUT_CONTAINER: ${{ inputs.container }}
         INPUT_CONTAINER_GROUP: ${{ inputs.container_group }}
-        INPUT_FALCON_IMAGE_URI: ${{ inputs.falcon_image_uri }}
+        INPUT_FALCON_IMAGE_URI: ${{ inputs.falcon_image_uri || steps.falconutil-pull.outputs.FALCON_IMAGE_URI }}
         INPUT_FALCONCTL_OPTS: ${{ inputs.falconctl_opts }}
         INPUT_IMAGE_PULL_POLICY: ${{ inputs.image_pull_policy }}
         INPUT_RESOURCE_GROUP: ${{ inputs.resource_group }}

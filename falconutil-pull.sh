@@ -7,6 +7,11 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+log() {
+    local log_level=${2:-INFO}
+    echo "[$(date +'%Y-%m-%dT%H:%M:%S')] $log_level: $1" >&2
+}
+
 validate_required_inputs() {
     local invalid=false
     local -a required_inputs=(
@@ -56,7 +61,9 @@ if [ ! -f $FALCONUTIL_BIN_PATH/falconutil ]; then
     exit 1
 fi
 
+log "Successfully pulled Falcon Container Sensor image: $image_name"
+
 # Set the bin path as an output
 echo "FALCONUTIL_BIN=$FALCONUTIL_BIN_PATH/falconutil" >> "$GITHUB_OUTPUT"
 # Set the image name as an output
-echo "FALCON_IMAGE_NAME=$CONTAINER_IMAGE_URI" >> "$GITHUB_OUTPUT"
+echo "FALCON_IMAGE_URI=$image_name" >> "$GITHUB_OUTPUT"

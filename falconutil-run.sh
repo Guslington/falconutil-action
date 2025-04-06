@@ -63,15 +63,11 @@ execute_falconutil_patch() {
 
     # Execute the command
     if "${FALCONUTIL_BIN}" "${cmd_args[@]}"; then
-        local exit_code=$?
-        log "Patching completed successfully with exit code ${exit_code}"
-        echo "exit-code=${exit_code}" >>"$GITHUB_OUTPUT"
-        echo "patched_image=${INPUT_TARGET_IMAGE_URI}" >>"$GITHUB_OUTPUT"
-        return $exit_code
+        log "Patching completed successfully"
     else
         local exit_code=$?
         log "Patching failed with exit code ${exit_code}" "ERROR"
-        echo "exit-code=${exit_code}" >>"$GITHUB_OUTPUT"
+        # Let the built-in GitHub Actions error handling take care of the failure
         return $exit_code
     fi
 }
