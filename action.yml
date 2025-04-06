@@ -8,9 +8,6 @@ inputs:
   falcon_client_id:
     description: 'CrowdStrike API Client ID for authentication'
     required: true
-  falcon_client_secret:
-    description: 'CrowdStrike API Client Secret for authentication'
-    required: true
   falcon_region:
     description: 'CrowdStrike API region. Allowed values are us-1, us-2, eu-1, us-gov-1, us-gov-2'
     required: true
@@ -21,20 +18,26 @@ inputs:
     description: 'Falcon Container Sensor version to use (defaults to the latest)'
     required: false
   cid:
-    description: 'CustomerId to use'
+    description: 'Customer ID w/checksum to use (example 1234567890ABCDEFG-XY)'
+    required: true
+  source_image_uri:
+    description: 'Source Image URI to be patched'
+    required: true
+  target_image_uri:
+    description: 'Expected URI for patched Target Image'
+    required: true
+  falcon_image_uri:
+    description: 'Falcon Container Sensor Image URI'
     required: true
   cloud_service:
     description: 'Cloud Service platform. Allowed values: ACA | ACI | ECS_FARGATE | CLOUDRUN'
     required: false
   container:
-    description: 'Container name'
+    description: 'Container name that can be used to identify the container on the Falcon console'
     required: false
   container_group:
     description: 'Azure container group name for Azure Container Instances platform'
     required: false
-  falcon_image_uri:
-    description: 'Falcon Container Sensor Image URI'
-    required: true
   falconctl_opts:
     description: 'All falconctl options in a single string'
     required: false
@@ -45,15 +48,9 @@ inputs:
   resource_group:
     description: 'Azure resource group name for Azure Container Instances and Azure Container Apps platform'
     required: false
-  source_image_uri:
-    description: 'Source Image URI to be patched'
-    required: true
   subscription:
     description: 'Azure subscription id for Azure Container Instances and Azure Container Apps platform'
     required: false
-  target_image_uri:
-    description: 'Expected URI for patched Target Image'
-    required: true
 
 outputs:
   exit-code:
