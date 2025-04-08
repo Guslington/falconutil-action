@@ -29,7 +29,7 @@ jobs:
         tags: myusername/myapp:latest
 
     - name: Patch Container Image with Falcon Sensor
-      uses: crowdstrike/falconutil-action@v1.0.0  # x-release-please-version
+      uses: crowdstrike/falconutil-action@v1.0.0
       with:
         falcon_client_id: ${{ vars.FALCON_CLIENT_ID }}
         falcon_region: 'us-1'

@@ -1,3 +1,5 @@
+name: release-please
+
 on:
   push:
     branches:
@@ -8,16 +10,23 @@ permissions:
   pull-requests: write
   issues: write
 
-name: release-please
-
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v3
         id: release
         with:
           release-type: simple
+          pull-request-header: ":rocket: New release incoming!"
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false}]'
+          extra-files: |
+            README.md
+            examples/aws-ecr-workflow.yml
+            examples/azure-acr-workflow.yml
+            examples/docker-hub-workflow.yml
+            examples/ghcr-workflow.yml
+            examples/google-artifact-registry-workflow.yml
 
       # The following steps are only executed if a release is created.
       - name: Check out code
