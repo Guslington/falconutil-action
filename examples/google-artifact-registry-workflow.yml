@@ -28,7 +28,7 @@ jobs:
         docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/myapp:latest
 
     - name: Patch Container Image with Falcon Sensor
-      uses: crowdstrike/falconutil-action@v1.0.0
+      uses: crowdstrike/falconutil-action@v1.0.0  # x-release-please-version
       with:
         falcon_client_id: ${{ vars.FALCON_CLIENT_ID }}
         falcon_region: 'us-1'

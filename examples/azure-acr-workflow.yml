@@ -30,7 +30,7 @@ jobs:
         docker push ${{ secrets.ACR_LOGIN_SERVER }}/myapp:latest
 
     - name: Patch Container Image with Falcon Sensor
-      uses: crowdstrike/falconutil-action@v1.0.0
+      uses: crowdstrike/falconutil-action@v1.0.0  # x-release-please-version
       with:
         falcon_client_id: ${{ vars.FALCON_CLIENT_ID }}
         falcon_region: 'us-1'
