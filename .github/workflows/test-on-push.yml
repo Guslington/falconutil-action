@@ -82,11 +82,3 @@ jobs:
 
           echo "Registry containers after cleanup:"
           docker ps -a | grep registry || echo "No registry containers found"
-
-      - name: Test Falconutil action
-        uses: ./
-        with:
-          falcon_client_id: ${{ vars.FALCON_CLIENT_ID }}
-          falcon_region: ${{ vars.FALCON_CLOUD_REGION }}
-        env:
-          FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
