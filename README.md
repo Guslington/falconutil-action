@@ -126,8 +126,7 @@ To use this action in your workflow, add the following step:
 
 ## Support
 
-This project is a community-driven, open source project designed to provide a simple way to run CrowdStrike Falconutil in a GitHub Action.
-
+This project is a community-driven, open source project designed to provide a simple way to run CrowdStrike's Falcon Utility in a GitHub Action.
 While not a formal CrowdStrike product, this project is maintained by CrowdStrike and supported in partnership with the open source developer community.
 
 For additional support, please see the [SUPPORT](SUPPORT.md) file.

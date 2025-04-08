@@ -1,12 +1,12 @@
-# FCS CLI GitHub Action Support
+# Falcon Utility GitHub Action Support
 
-This project is a community-driven, open source project designed to provide a simple way to run CrowdStrike Falcon Cloud Security (FCS) CLI in a GitHub Action.
+This project is a community-driven, open source project designed to provide a simple way to run CrowdStrike's Falcon Utility in a GitHub Action.
 
 While not a formal CrowdStrike product, this project is maintained by CrowdStrike and supported in partnership with the open source developer community.
 
 ## Issue Reporting and Questions
 
-Issues may be reported [here](https://github.com/CrowdStrike/fcs-action/issues/new) and are used to track bugs, documentation and link updates, enhancement requests and security concerns.
+Issues may be reported [here](https://github.com/CrowdStrike/falconutil-action/issues/new) and are used to track bugs, documentation and link updates, enhancement requests and security concerns.
 
 ## Support Escalation
 

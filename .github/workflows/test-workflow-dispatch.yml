@@ -1,4 +1,4 @@
-name: Test Action (workflow_dispatch)
+name: Test Falcon Container Image Patching (workflow_dispatch)
 
 on:
   workflow_dispatch:
@@ -11,64 +11,108 @@ on:
         required: true
         default: us-1
       version:
-        description: "FCS CLI version to use"
+        description: "Falcon Container Sensor version to use (defaults to latest)"
         required: false
-      config:
-        description: "Path to the scan configuration file"
+      cid:
+        description: "Customer ID w/checksum to use (example 1234567890ABCDEFG-XY)"
+        required: true
+      source_image_uri:
+        description: "Source Image URI to be patched"
+        required: true
+        default: "nginx:latest"
+      target_image_uri:
+        description: "Expected URI for patched Target Image"
+        required: true
+        default: "localhost:5000/nginx:patched"
+      cloud_service:
+        description: "Cloud Service platform. Allowed values: ACA | ACI | ECS_FARGATE | CLOUDRUN"
         required: false
-      disable_secrets_scan:
-        description: "Disable scanning of secrets and passwords in target files"
+      container:
+        description: "Container name for identification in Falcon console"
         required: false
-        default: "false"
-      fail_on:
-        description: "Comma-separated list of which kind of results should return an exit code different from 0"
+      container_group:
+        description: "Azure container group name"
         required: false
-      output_path:
-        description: "Path to save the scan results"
+      falconctl_opts:
+        description: "falconctl options in a single string"
         required: false
-        default: "./"
-      path:
-        description: "Path to local file, local directory or git repo to scan (e.g. ./my-local-dir, git::<git repo>, sample-file.tf)"
+      image_pull_policy:
+        description: "PullPolicy for Source and Falcon Container Sensor Image"
         required: false
-      report_formats:
-        description: "Comma-separated list of formats in which reports are to be written (e.g. json,sarif)"
+        default: "Always"
+      resource_group:
+        description: "Azure resource group name"
         required: false
-      upload_results:
-        description: "Upload scan results to the CrowdStrike Falcon Console"
+      subscription:
+        description: "Azure subscription id"
         required: false
-        default: "false"
 
 jobs:
-  fcs-scan:
+  test-falconutil-action:
     runs-on: ubuntu-latest
     steps:
-      - name: Validate input path
-        run: |
-          # Block path traversal patterns and absolute paths
-          if [[ "${{ inputs.path }}" =~ \.\. ]] || [[ "${{ inputs.path }}" =~ ^/ ]]; then
-            echo "Security error: Path must not contain '..' (directory traversal) or start with '/' (absolute path)"
-            exit 1
-          fi
-
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Test FCS CLI IaC Scan
+      - name: Set up local registry for testing
+        id: local_registry
+        run: |
+          # Start the registry and capture the container ID
+          REGISTRY_ID=$(docker run -d -p 5000:5000 --name local-registry registry:2)
+
+          # Save the container ID for later cleanup
+          echo "REGISTRY_ID=$REGISTRY_ID" >> $GITHUB_ENV
+          echo "registry_id=$REGISTRY_ID" >> $GITHUB_OUTPUT
+
+          echo "Local registry running on localhost:5000 with ID: $REGISTRY_ID"
+
+          # Test if registry is accessible
+          curl -s http://localhost:5000/v2/ || echo "Registry API not responding"
+
+      - name: Pull test image
+        run: docker pull ${{ inputs.source_image_uri }}
+
+      - name: Test Falcon Container Image Patching
         uses: ./
         with:
-          falcon_client_id: ${{ inputs.falcon_client_id }} # Required
-          falcon_region: ${{ inputs.falcon_region }} # Required
-          path: ${{ inputs.path }} # Required
-          disable_secrets_scan: ${{ inputs.disable_secrets_scan }}
-          upload_results: ${{ inputs.upload_results }}
+          falcon_client_id: ${{ inputs.falcon_client_id }}
+          falcon_region: ${{ inputs.falcon_region }}
           version: ${{ inputs.version }}
-          config: ${{ inputs.config }}
-          fail_on: ${{ inputs.fail_on }}
-          output_path: ${{ inputs.output_path }}
-          report_formats: ${{ inputs.report_formats }}
+          cid: ${{ inputs.cid }}
+          source_image_uri: ${{ inputs.source_image_uri }}
+          target_image_uri: ${{ inputs.target_image_uri }}
+          cloud_service: ${{ inputs.cloud_service }}
+          container: ${{ inputs.container }}
+          container_group: ${{ inputs.container_group }}
+          falconctl_opts: ${{ inputs.falconctl_opts }}
+          image_pull_policy: ${{ inputs.image_pull_policy }}
+          resource_group: ${{ inputs.resource_group }}
+          subscription: ${{ inputs.subscription }}
         env:
           FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
 
-      - name: Show scan results
+      - name: Verify patched image exists
         run: |
-          cat *-scan-results.json
+          echo "Verifying patched image exists..."
+          docker images
+
+          if docker image inspect ${{ inputs.target_image_uri }} &> /dev/null; then
+            echo "✅ Patched image successfully created: ${{ inputs.target_image_uri }}"
+          else
+            echo "❌ Failed to create patched image"
+            exit 1
+          fi
+
+      - name: Cleanup local registry
+        if: always()
+        run: |
+          echo "Cleaning up local registry with ID: $REGISTRY_ID"
+          # Try to stop the container first
+          docker stop local-registry || echo "Registry already stopped"
+          # Remove the container to ensure complete cleanup
+          docker rm -f local-registry || echo "Registry already removed"
+          # Also try removal by ID as a backup method
+          docker rm -f $REGISTRY_ID || echo "Failed to remove by ID"
+
+          echo "Registry containers after cleanup:"
+          docker ps -a | grep registry || echo "No registry containers found"

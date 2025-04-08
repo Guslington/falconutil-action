@@ -2,10 +2,6 @@
 # This script executes the Falconutil patch-image command to patch container images
 # with Falcon Container Sensor.
 
-set -o errexit
-set -o nounset
-set -o pipefail
-
 readonly FALCONUTIL_BIN="${OUTPUT_FALCONUTIL_BIN:-}"
 
 log() {
@@ -43,10 +39,10 @@ execute_falconutil_patch() {
     # Build command arguments
     local -a cmd_args=(
         "patch-image"
-        "--source-image=${INPUT_SOURCE_IMAGE_URI}"
-        "--target-image=${INPUT_TARGET_IMAGE_URI}"
+        "--source-image-uri=${INPUT_SOURCE_IMAGE_URI}"
+        "--target-image-uri=${INPUT_TARGET_IMAGE_URI}"
         "--cid=${INPUT_CID}"
-        "--falcon-image=${INPUT_FALCON_IMAGE_URI}"
+        "--falcon-image-uri=${INPUT_FALCON_IMAGE_URI}"
     )
 
     # Add optional arguments if they are provided

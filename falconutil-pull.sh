@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
+set -x
 
 # This script is used to pull the Falcon Container Sensor container image.
 # Uses the falcon-container-sensor-pull.sh script to pull the image.
-
-set -o errexit
-set -o nounset
-set -o pipefail
 
 log() {
     local log_level=${2:-INFO}
