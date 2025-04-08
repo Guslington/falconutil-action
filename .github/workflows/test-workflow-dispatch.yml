@@ -10,9 +10,6 @@ on:
         description: "CrowdStrike API region. Allowed values are us-1, us-2, eu-1, us-gov-1, us-gov-2"
         required: true
         default: us-1
-      version:
-        description: "Falcon Container Sensor version to use (defaults to latest)"
-        required: false
       cid:
         description: "Customer ID w/checksum to use (example 1234567890ABCDEFG-XY)"
         required: true
@@ -24,27 +21,8 @@ on:
         description: "Expected URI for patched Target Image"
         required: true
         default: "localhost:5000/nginx:patched"
-      cloud_service:
-        description: "Cloud Service platform. Allowed values: ACA | ACI | ECS_FARGATE | CLOUDRUN"
-        required: false
-      container:
-        description: "Container name for identification in Falcon console"
-        required: false
-      container_group:
-        description: "Azure container group name"
-        required: false
       falconctl_opts:
         description: "falconctl options in a single string"
-        required: false
-      image_pull_policy:
-        description: "PullPolicy for Source and Falcon Container Sensor Image"
-        required: false
-        default: "Always"
-      resource_group:
-        description: "Azure resource group name"
-        required: false
-      subscription:
-        description: "Azure subscription id"
         required: false
 
 jobs:
@@ -77,17 +55,10 @@ jobs:
         with:
           falcon_client_id: ${{ inputs.falcon_client_id }}
           falcon_region: ${{ inputs.falcon_region }}
-          version: ${{ inputs.version }}
           cid: ${{ inputs.cid }}
           source_image_uri: ${{ inputs.source_image_uri }}
           target_image_uri: ${{ inputs.target_image_uri }}
-          cloud_service: ${{ inputs.cloud_service }}
-          container: ${{ inputs.container }}
-          container_group: ${{ inputs.container_group }}
           falconctl_opts: ${{ inputs.falconctl_opts }}
-          image_pull_policy: ${{ inputs.image_pull_policy }}
-          resource_group: ${{ inputs.resource_group }}
-          subscription: ${{ inputs.subscription }}
         env:
           FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
 
