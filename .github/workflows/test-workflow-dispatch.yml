@@ -1,4 +1,4 @@
-name: Test Falcon Container Image Patching (workflow_dispatch)
+name: Test Action (workflow_dispatch)
 
 on:
   workflow_dispatch:
