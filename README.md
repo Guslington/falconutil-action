@@ -1,5 +1,8 @@
 # CrowdStrike Falcon Utility GitHub Action
 
+> [!WARNING]
+> **This repository is currently under development and not ready for production use.**
+
 This GitHub Action allows you to use CrowdStrike's Falcon Utility to patch container images with the Falcon Container Sensor directly in your CI/CD pipeline.
 
 ## Features
@@ -30,7 +33,7 @@ Create a GitHub secret in your repository to store the CrowdStrike API Client se
 ## Usage
 
 To use this action in your workflow, add the following step:
-
+<!-- x-release-please-start-version -->
 ```yaml
 - name: Patch Container Image with Falcon Sensor
   uses: crowdstrike/falconutil-action@v1.0.0
@@ -38,12 +41,12 @@ To use this action in your workflow, add the following step:
     falcon_client_id: 'abcdefghijk123456789'
     falcon_region: 'us-2'
     source_image_uri: 'myregistry/myapp:latest'
-    target_image_uri: 'myregistry/myapp:falcon'
+    target_image_uri: 'myregistry/myapp:patched'
     cid: '1234567890ABCDEFG'
   env:
     FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
 ```
-
+<!-- x-release-please-end -->
 ## Environment Variables
 
 | Variable | Description | Required | Default | Example/Allowed Values |
@@ -58,7 +61,7 @@ To use this action in your workflow, add the following step:
 | `falcon_region` | CrowdStrike API region | **Yes** | `us-1` | Allowed values: `us-1, us-2, eu-1, us-gov-1, us-gov-2` |
 | `version` | Falcon Container Sensor version to pull (*defaults to the latest*) | No | - | `7.20.0-5908` |
 | `source_image_uri` | Source Image URI to be patched | **Yes** | - | `myregistry/myapp:latest` |
-| `target_image_uri` | Expected URI for patched Target Image | **Yes** | - | `myregistry/myapp:falcon` |
+| `target_image_uri` | Expected URI for patched Target Image | **Yes** | - | `myregistry/myapp:patched` |
 | `cid` | Customer ID w/checksum to use | **Yes** | - | `1234567890ABCDEFG-XY` |
 | `falcon_image_uri` | Falcon Container Sensor Image URI (*defaults to using the image pulled by the action*) | No | - | `my-falcon-sensor-image:latest` |
 | `cloud_service` | Cloud Service platform the container will be deployed on | No | - | Allowed values: `ACA, ACI, ECS_FARGATE, CLOUDRUN` |
@@ -72,7 +75,7 @@ To use this action in your workflow, add the following step:
 ## Examples
 
 ### Basic container image patching
-
+<!-- x-release-please-start-version -->
 ```yaml
 - name: Patch Container Image
   uses: crowdstrike/falconutil-action@v1.0.0
@@ -85,9 +88,9 @@ To use this action in your workflow, add the following step:
   env:
     FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
 ```
-
+<!-- x-release-please-end -->
 ### Azure Container Instance deployment
-
+<!-- x-release-please-start-version -->
 ```yaml
 - name: Patch Container Image for ACI
   uses: crowdstrike/falconutil-action@v1.0.0
@@ -104,9 +107,9 @@ To use this action in your workflow, add the following step:
   env:
     FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
 ```
-
+<!-- x-release-please-end -->
 ### AWS ECS Fargate deployment
-
+<!-- x-release-please-start-version -->
 ```yaml
 - name: Patch Container Image for ECS Fargate
   uses: crowdstrike/falconutil-action@v1.0.0
@@ -123,6 +126,16 @@ To use this action in your workflow, add the following step:
     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 ```
+<!-- x-release-please-end -->
+## Full Workflow Examples
+
+For complete workflow examples including registry authentication and image pushing, see the examples directory:
+
+- [Docker Hub Registry Example](./examples/docker-hub-workflow.yml)
+- [GitHub Container Registry Example](./examples/ghcr-workflow.yml)
+- [AWS ECR Registry Example](./examples/aws-ecr-workflow.yml)
+- [Azure Container Registry Example](./examples/azure-acr-workflow.yml)
+- [Google Artifact Registry Example](./examples/google-artifact-registry-workflow.yml)
 
 ## Support
 

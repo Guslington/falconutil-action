@@ -1,0 +1,42 @@
+name: Build, Patch and Push to Google Artifact Registry
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-patch-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Configure Docker for Artifact Registry
+      run: |
+        gcloud auth configure-docker ${{ secrets.GAR_LOCATION }}-docker.pkg.dev
+
+    - name: Build and push Docker image
+      run: |
+        docker build . -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/myapp:latest
+        docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/myapp:latest
+
+    - name: Patch Container Image with Falcon Sensor
+      uses: crowdstrike/falconutil-action@v1.0.0
+      with:
+        falcon_client_id: ${{ vars.FALCON_CLIENT_ID }}
+        falcon_region: 'us-1'
+        source_image_uri: '${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/myapp:latest'
+        target_image_uri: '${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/myapp:patched'
+        cid: ${{ secrets.FALCON_CID }}
+      env:
+        FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
+
+    - name: Push patched image
+      run: docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/myapp:patched
