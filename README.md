@@ -30,6 +30,17 @@ This action relies on the environment variable `FALCON_CLIENT_SECRET` to authent
 
 Create a GitHub secret in your repository to store the CrowdStrike API Client secret created from the step above. For more information, see [Creating secrets for a repository](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
+### Docker Authentication Limitations
+
+The Falcon Utility requires direct authentication credentials in `~/.docker/config.json` and does not support credential helpers (such as the `gcloud` helper used by Google Artifact Registry). When authenticating with registries that use credential helpers instead of storing encoded credentials directly in the config file, patching operations may fail with authentication errors.
+
+**Workaround:**
+
+1. Add an explicit step to pull the source image before patching: `docker pull SOURCE_IMAGE_URI`
+2. Set `image_pull_policy: IfNotPresent` in your action configuration to use the locally cached image
+
+This limitation applies to any registry that uses credential helpers rather than storing base64-encoded credentials directly in the auth section of the Docker configuration.
+
 ## Usage
 
 To use this action in your workflow, add the following step:
