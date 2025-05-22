@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
@@ -33,7 +33,7 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     - name: Patch Container Image with Falcon Sensor
-      uses: crowdstrike/falconutil-action@v1.0.0
+      uses: crowdstrike/falconutil-action@v1
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
@@ -43,6 +43,7 @@ jobs:
         source_image_uri: '${{ env.ECR_REGISTRY }}/myapp:latest'
         target_image_uri: '${{ env.ECR_REGISTRY }}/myapp:patched'
         cid: ${{ secrets.FALCON_CID }}
+        image_pull_policy: IfNotPresent
 
     - name: Push patched image
       env:

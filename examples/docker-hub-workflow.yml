@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -29,13 +29,14 @@ jobs:
         tags: myusername/myapp:latest
 
     - name: Patch Container Image with Falcon Sensor
-      uses: crowdstrike/falconutil-action@v1.0.0
+      uses: crowdstrike/falconutil-action@v1
       with:
         falcon_client_id: ${{ vars.FALCON_CLIENT_ID }}
         falcon_region: 'us-1'
         source_image_uri: 'myusername/myapp:latest'
         target_image_uri: 'myusername/myapp:patched'
         cid: ${{ secrets.FALCON_CID }}
+        image_pull_policy: IfNotPresent
       env:
         FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
 
