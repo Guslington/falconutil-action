@@ -29,6 +29,10 @@ jobs:
       run: |
         gcloud auth configure-docker ${{ secrets.GAR_LOCATION }}-docker.pkg.dev --quiet
 
+    - name: Ensure we can pull source image
+      run: |
+        docker pull ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/code-oss:latest
+
     - name: Patch Container Image with Falcon Sensor
       uses: ./
       with:
@@ -37,6 +41,7 @@ jobs:
         source_image_uri: ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/code-oss:latest
         target_image_uri: ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/code-oss:patched
         cid: ${{ vars.cid }}
+        image_pull_policy: IfNotPresent
       env:
         FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
 
