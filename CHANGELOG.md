@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/CrowdStrike/falconutil-action/compare/v1.0.0...v1.0.1) (2025-05-23)
+
+
+### Miscellaneous
+
+* pull first and set pull to not ([18e72a8](https://github.com/CrowdStrike/falconutil-action/commit/18e72a8d084dc0618c7969ce616ac18436e2e630))
+
 ## 1.0.0 (2025-04-08)
 
 
