@@ -1,8 +1,5 @@
 # CrowdStrike Falcon Utility GitHub Action
 
-> [!WARNING]
-> **This repository is currently under development and not ready for production use.**
-
 This GitHub Action allows you to use CrowdStrike's Falcon Utility to patch container images with the Falcon Container Sensor directly in your CI/CD pipeline.
 
 ## Features
