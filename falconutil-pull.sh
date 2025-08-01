@@ -34,8 +34,10 @@ curl -O https://raw.githubusercontent.com/CrowdStrike/falcon-scripts/main/bash/c
 
 # Check if the version is provided
 VERSION=${INPUT_VERSION:+"--version ${INPUT_VERSION}"}
+# check if the falcon image platform is provided
+PLATFORM="--platform ${INPUT_FALCON_IMAGE_PLATFORM:-x86_64}"
 
-output=$(bash falcon-container-sensor-pull.sh -u "${INPUT_FALCON_CLIENT_ID}" -r "${INPUT_FALCON_REGION}" -t falcon-container "${VERSION}")
+output=$(bash falcon-container-sensor-pull.sh -u "${INPUT_FALCON_CLIENT_ID}" -r "${INPUT_FALCON_REGION}" -t falcon-container ${VERSION} ${PLATFORM})
 
 # Extract the image name from the output
 image_name=$(echo "$output" | grep "^registry.*.com/falcon-container" | tail -n 1)

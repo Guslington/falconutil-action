@@ -29,6 +29,10 @@ inputs:
   falcon_image_uri:
     description: 'Falcon Container Sensor Image URI (optional - defaults to using the image pulled by the action)'
     required: false
+  falcon_image_platform:
+    description: 'Specify sensor platform to retrieve when pulling from CrowdStrike repository'
+    required: false
+    default: x86_64
   cloud_service:
     description: 'Cloud Service platform. Allowed values: ACA | ACI | ECS_FARGATE | CLOUDRUN'
     required: false
@@ -63,6 +67,7 @@ runs:
         INPUT_FALCON_CLIENT_ID: ${{ inputs.falcon_client_id }}
         INPUT_FALCON_REGION: ${{ inputs.falcon_region }}
         INPUT_VERSION: ${{ inputs.version }}
+        INPUT_FALCON_IMAGE_PLATFORM: ${{ inputs.falcon_image_platform }}
 
     - name: Run Falconutil patch-image
       id: falconutil-run

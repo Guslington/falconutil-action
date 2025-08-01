@@ -38,6 +38,15 @@ The Falcon Utility requires direct authentication credentials in `~/.docker/conf
 
 This limitation applies to any registry that uses credential helpers rather than storing base64-encoded credentials directly in the auth section of the Docker configuration.
 
+## Multi-Architecture Support
+
+Recent versions of the Falcon Container Sensor are published as multi-architecture images supporting both x86_64 and ARM64 platforms. This action defaults to pulling the x86_64 image to maintain compatibility with existing workflows.
+
+For ARM-based deployments (AWS Graviton, Apple Silicon, ARM Kubernetes nodes), specify the ARM architecture:
+
+`falcon_image_platform: 'aarch64'`
+
+For x86_64 deployments (default), no changes are required to existing workflows.
 ## Usage
 
 To use this action in your workflow, add the following step:
@@ -79,6 +88,7 @@ To use this action in your workflow, add the following step:
 | `image_pull_policy` | PullPolicy for Source and Falcon Container Sensor Image | No | `Always` | Allowed values: `IfNotPresent, Always` |
 | `resource_group` | Azure resource group name | No | - | `my-resource-group` |
 | `subscription` | Azure subscription id | No | - | `subscription-id` |
+| `falcon_image_platform` | Specify image architecture when using the image pulled by the action | No | `x86_64` | `x86_64`, `aarch64` |
 
 ## Examples
 
