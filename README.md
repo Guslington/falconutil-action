@@ -44,9 +44,12 @@ Recent versions of the Falcon Container Sensor are published as multi-architectu
 
 For ARM-based deployments (AWS Graviton, Apple Silicon, ARM Kubernetes nodes), specify the ARM architecture:
 
-`falcon_image_platform: 'aarch64'`
+```yaml
+falcon_image_platform: 'aarch64'
+```
 
-For x86_64 deployments (default), no changes are required to existing workflows.
+For Intel-based deployments (default), no changes are required to existing workflows.
+
 ## Usage
 
 To use this action in your workflow, add the following step:
